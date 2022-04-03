@@ -8,24 +8,68 @@
 #include <semaphore.h>
 
 sem_t *mutex;
+char *name = "file.txt";
 
 void *threadRun(void *t);
+int readFile(char *fileName, int **resources);
 
 int main(int argc, char *argv[])
 {
+    int **resources = (int **) malloc(sizeof(int)*5);
+    readFile(name, resources);
+
+    int numberCustomers = 0;
+    int availableResources[4] = {0,0,0,0};
     int n, m, i, j, k;
     n = 7;
     m = 2;
 
-    int flag = 1;
-
-    for (int i = 0; i < n; i++)
+    if ((mutex = sem_open("/semaphore", O_CREAT, 0644, 1)) == SEM_FAILED)
     {
-        if (f[i] == 0)
-        {
-            flag = 0;
-            printf("The following system is not safe");
-            break;
-        }
+        perror("sem_open");
+        exit(EXIT_FAILURE);
     }
+
+
+
+}
+
+int readFile(char *fileName, int **resources) // use this method in a suitable way to read file
+{
+    FILE *file;
+    file = fopen("sample4_in.txt", "r");
+
+    if (!file){
+        printf("Child A: Error in opening input file...exiting with error code -1\n");
+        return -1;}
+
+    char line[256];
+
+    while (fgets(line, sizeof(line), file))
+    {
+       printf("%s", line);
+    }
+
+    fclose(file);
+
+    int c = 0;
+
+    while(c < 5){
+        int *temp = (int *)malloc(sizeof(int)*5);
+        resources[c] = temp;
+        c++;
+    }
+
+    int x = 0;
+    int y = 0;
+
+    while(x < 5){
+        while (y < 5){
+            printf("%d ", resources[x][y]);
+            y++;
+        }
+        x++;
+    }
+
+    return 1;
 }
