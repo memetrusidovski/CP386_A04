@@ -11,11 +11,11 @@ sem_t *mutex;
 char *name = "file.txt";
 
 void *threadRun(void *t);
-int readFile(char *fileName, int **resources);
+int readFile(char *fileName, int ***resources);
 
 int main(int argc, char *argv[])
 {
-    int **resources = (int **) malloc(sizeof(int)*5);
+    int ***resources = (int ***) malloc(sizeof(int));
     readFile(name, resources);
 
     int numberCustomers = 0;
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 
 }
 
-int readFile(char *fileName, int **resources) // use this method in a suitable way to read file
+int readFile(char *fileName, int ***resources) // use this method in a suitable way to read file
 {
     FILE *file;
     file = fopen("sample4_in.txt", "r");
@@ -52,11 +52,14 @@ int readFile(char *fileName, int **resources) // use this method in a suitable w
 
     fclose(file);
 
+    *resources = (int **)malloc(sizeof(int) * 25);
+
     int c = 0;
 
     while(c < 5){
         int *temp = (int *)malloc(sizeof(int)*5);
-        resources[c] = temp;
+        
+        (*resources)[c] = temp;
         c++;
     }
 
@@ -65,9 +68,10 @@ int readFile(char *fileName, int **resources) // use this method in a suitable w
 
     while(x < 5){
         while (y < 5){
-            printf("%d ", resources[x][y]);
+            printf("%d ", (*resources)[x][y]);
             y++;
         }
+        printf("\n");
         x++;
     }
 
