@@ -10,23 +10,27 @@
 sem_t *mutex;
 char *name = "file.txt";
 
-int available[5][4] = {{6, 4, 7, 3}, {4, 2, 3, 2}, {2, 5, 3, 3}, {6, 3, 3, 2}, {5, 5, 7, 5}};
+int maximum[5][4] = {{6, 4, 7, 3}, {4, 2, 3, 2}, {2, 5, 3, 3}, {6, 3, 3, 2}, {5, 5, 7, 5}};
+int allocated[5][4] = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
 
 void *threadRun(void *t);
 int readFile(char *fileName, int ***resources);
+int needMatrix(int **matrix);
+int requestR(int customerNum);
 
 int main(int argc, char *argv[])
 {
-    int ***resources = (int ***) malloc(sizeof(int));
-    readFile(name, resources);
+    //if we were to scan file for a 2d array without hardcoding
+    /*int ***resources = (int ***) malloc(sizeof(int));
+    readFile(name, resources);*/
     int done = 0;
     char input[20];
 
     int numberCustomers = 0;
     int availableResources[4] = {0,0,0,0};
     int n, m, i, j, k;
-    n = 7;
-    m = 2;
+    n = 5;
+    m = 4;
 
     if ((mutex = sem_open("/semaphore", O_CREAT, 0644, 1)) == SEM_FAILED)
     {
@@ -42,6 +46,9 @@ int main(int argc, char *argv[])
 
 
         if(strcmp(input, "exit") == 0) done = 1;
+        if(input[0] == 'R' && input[1] == 'Q'){
+            requestR((int)input[3]-48);
+        }
         sleep(1);
     }
 }
@@ -94,4 +101,16 @@ int readFile(char *fileName, int ***resources) // use this method in a suitable 
 
     fclose(file);
     return 1;
+}
+
+int needMatrix(int **matrix){
+
+    return 1;
+}
+
+int requestR(int customerNum){
+    int r = 0;
+    printf("Request: %d\n", customerNum);
+    
+    return r;
 }
