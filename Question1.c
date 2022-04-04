@@ -16,7 +16,7 @@ int allocated[5][4] = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {
 void *threadRun(void *t);
 int readFile(char *fileName, int ***resources);
 int needMatrix(int **matrix);
-int requestR(int customerNum);
+int requestR(int customerNum, char *input);
 
 int main(int argc, char *argv[])
 {
@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     /*int ***resources = (int ***) malloc(sizeof(int));
     readFile(name, resources);*/
     int done = 0;
-    char input[20];
+    
 
     int numberCustomers = 0;
     int availableResources[4] = {0,0,0,0};
@@ -39,17 +39,20 @@ int main(int argc, char *argv[])
     }
 
     while (done == 0)
-    {
+    {   
+        char input[20];
         printf("Enter Command: ");
-        scanf("%s", input);
-        printf(" \n");
+        scanf(" %[^\n]", input);
 
 
         if(strcmp(input, "exit") == 0) done = 1;
-        if(input[0] == 'R' && input[1] == 'Q'){
-            requestR((int)input[3]-48);
+        else if(input[0] == 'R' && input[1] == 'Q'){
+            int custNum = (int)input[3]-48;
+            if(requestR(custNum, input) == 1) printf("State is safe, request is satisfied\n");
+            else printf("State is not safe, Rejected\n");
         }
-        sleep(1);
+        
+        
     }
 }
 
@@ -108,9 +111,23 @@ int needMatrix(int **matrix){
     return 1;
 }
 
-int requestR(int customerNum){
-    int r = 0;
+int requestR(int customerNum, char *input){
+    int r = 1;
     printf("Request: %d\n", customerNum);
     
+    int temp[4] = {0,0,0,0};
+
+    for(int i = 0; i < 4; i++){
+        allocated[customerNum][i] = (int)input[5 + (2 * i)] - 48;
+        if (allocated[customerNum][i] > maximum[customerNum][i]){
+            r = 0;
+            //Reset to 0, rejected
+            for (int i = 0; i < 4; i++)
+                allocated[customerNum][i] = 0;
+            
+    }
+
+
+
     return r;
 }
