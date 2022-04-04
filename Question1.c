@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <semaphore.h>
+#include <stdbool.h>
 
 sem_t *mutex;
 char *name = "file.txt";
@@ -23,7 +24,7 @@ int main(int argc, char *argv[])
     //if we were to scan file for a 2d array without hardcoding
     /*int ***resources = (int ***) malloc(sizeof(int));
     readFile(name, resources);*/
-    int done = 0;
+    bool done = true;
     
 
     int numberCustomers = 0;
@@ -38,22 +39,26 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    while (done == 0)
+    while (done)
     {   
         char input[20];
         printf("Enter Command: ");
-        scanf(" %[^\n]", input);
+        scanf(" %20[^\n]", input);
 
-
-        if(strcmp(input, "exit") == 0) done = 1;
+        if (strcmp(input, "exit") == 0)
+        {
+            done = false;
+        }
         else if(input[0] == 'R' && input[1] == 'Q'){
             int custNum = (int)input[3]-48;
             if(requestR(custNum, input) == 1) printf("State is safe, request is satisfied\n");
             else printf("State is not safe, Rejected\n");
         }
         
-        
     }
+    int **need = (int **) malloc(sizeof(int)*4*5);
+    needMatrix(need);
+
 }
 
 int readFile(char *fileName, int ***resources) // use this method in a suitable way to read file
@@ -107,6 +112,24 @@ int readFile(char *fileName, int ***resources) // use this method in a suitable 
 }
 
 int needMatrix(int **matrix){
+    //int **needed = (int**) malloc(sizeof(int)*4*5); 
+    
+    for(int x = 0; x < 4; x++){
+        for(int y = 0; y < 3; y++){
+            printf("fasfa");
+            matrix[x][y] = maximum[x][y] - allocated[x][y];
+        }
+    }
+
+    //matrix = needed;
+
+    for (int x = 0; x < 4; x++)
+    {
+        for (int y = 0; y < 3; y++)
+        {
+            printf("%d", *(*(matrix + x) + y) );
+        }
+    }
 
     return 1;
 }
@@ -124,7 +147,7 @@ int requestR(int customerNum, char *input){
             //Reset to 0, rejected
             for (int i = 0; i < 4; i++)
                 allocated[customerNum][i] = 0;
-            
+        }
     }
 
 
