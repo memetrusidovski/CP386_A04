@@ -10,12 +10,13 @@
 
 sem_t *mutex;
 int block = 1000000; //Default block size
+int allocated = 0;
 
 typedef struct Node
 {
     int data;
     int processNum;
-    Node *_next;
+    struct Node *_next;
 } Node;
 
 typedef struct List
@@ -28,23 +29,23 @@ typedef struct List
 // All Linked List code is mine from my github repo
 // https://github.com/memetrusidovski/Data-Structures/tree/main/C
 List *create();
-void append(List *list, int data);
-void prepend(List *list, int data);
+Node* append(List *list, int data, int num);
+void prepend(List *list, int data, int num);
 void removeNode(Node *node);
 Node *search(List *list, int find);
 bool contains(List *list, int find);
-
+int req(Node *node);
+void status(List* lst);
 
 int main(int argc, char *argv[])
 {
     if(argc >= 2){
         block = atoi(argv[1]);
-        printf("Allocated %d bytes of memory", block);
+        printf("Allocated %d bytes of memory\n", block);
     }
     bool done = true;
     List *lst = create();
-    
-
+    char *token = NULL;
 
     while (done)
     {
@@ -58,15 +59,21 @@ int main(int argc, char *argv[])
         }
         else if (input[0] == 'R' && input[1] == 'Q')
         {
+            token = strtok(input, " ");
+            token = strtok(NULL, " ");
+            token = strtok(NULL, " ");
+
+            Node *node = append(lst,atoi(token),  atoi(&input[4]));
             
+            req(node);
         }
         else if (input[0] == 'R' && input[1] == 'L')
         {
-                
+            removeNode(search(lst, atoi(&input[4])));
         }
         else if (strcmp(input, "status") == 0)
         {
-            
+            status(lst);
         }
         else if (strcmp(input, "run") == 0)
         {
@@ -74,6 +81,23 @@ int main(int argc, char *argv[])
         }
 
         sleep(1);
+    }
+}
+
+int req(Node *node){
+
+
+    return 1;
+}
+
+void status(List *lst){
+    Node *current = (Node *)malloc(sizeof(Node));
+    current = lst->_head;
+
+    while (current != NULL)
+    {
+        printf("p%d: %d <<<<<<\n", current->processNum, current->data);
+        current = current->_next;
     }
 }
 
@@ -86,10 +110,11 @@ List *create()
 }
 
 // Adds a value to the end of a list
-void append(List *list, int data)
+Node* append(List *list, int data, int num)
 {
     Node *newNode = (Node *)malloc(sizeof(Node));
     newNode->data = data;
+    newNode->processNum = num;
 
     if (list->size == 0)
     {
@@ -103,13 +128,16 @@ void append(List *list, int data)
     }
 
     list->size++;
+
+    return newNode;
 }
 
 // Add a value to the front of a list
-void prepend(List *list, int data)
+void prepend(List *list, int data, int num)
 {
     Node *newNode = (Node *)malloc(sizeof(Node));
     newNode->data = data;
+    newNode->processNum = num;
 
     if (list->size == 0)
     {
@@ -140,7 +168,7 @@ Node *search(List *list, int find)
 
     while (current != NULL)
     {
-        if (current->data == find)
+        if (current->processNum == find)
         {
             return current;
         }
